@@ -1,0 +1,24 @@
+[
+    {
+        "id": 1001, "slug": "tidy-testing-in-action-second-edition", "title": "Tidy Testing in Action, Second Edition",
+        "isbn": "9781633438071", "lastSignificantDate": "2024-04-22T06:07:52-0400", "subtitle": "With fewer mocks",
+        "tags": ["Testing", "Intermediate"], "productOfferings": [{ "price": 54.99, "id": 1, "productType": "EBOOK" }]
+    },
+    {
+        "id": 2002, "slug": "agents-and-tools", "title": "Agents & Tools: A Field Guide",
+        "isbn": "9781633434660", "isMeap": true, "lastSignificantDate": "2026-09-21T08:32:25-0400",
+        "tags": ["Python", "Advanced"]
+    },
+    {
+        "id": 4004, "slug": "old-calculator-handbook", "title": "Old Calculator Handbook",
+        "isbn": "9781617293153", "lastSignificantDate": "2015-06-28T20:00:00-0400", "nextEdition": 5005
+    },
+    {
+        "id": 5005, "slug": "old-calculator-handbook-second-edition", "title": "Old Calculator Handbook, Second Edition",
+        "isbn": "9781633437319", "lastSignificantDate": "2023-12-05T09:51:19-0500"
+    },
+    {
+        "id": 3190, "slug": "project-finance-and-excel", "title": "Project Finance and Excel",
+        "isbn": "DIVC202336", "isLiveVideo": true
+    }
+]
