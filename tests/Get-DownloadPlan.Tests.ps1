@@ -52,6 +52,11 @@ Describe 'Get-DownloadPlan' {
         $s.Url | Should -Be 'https://manning-content.s3.amazonaws.com/download/x/code.zip'
     }
 
+    It 'names code that is not a zip with its own extension (one book''s code is a .tgz)' {
+        $book = New-Book 7 'AI as a Service' -CodeUrl 'https://manning-content.s3.amazonaws.com/download/1/e5d/ai-as-a-service.tgz'
+        (Get-DownloadPlan -Items @($book) -Format supplement).File | Should -Be 'AI as a Service - code.tgz'
+    }
+
     It 'records code on GitHub as a link, with nothing to download' {
         $s = Get-DownloadPlan -Items @(New-Book 7 'Book' -CodeUrl 'https://github.com/example/code') -Format supplement
         $s.Action | Should -Be 'link'

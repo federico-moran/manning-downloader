@@ -113,7 +113,9 @@ function Get-DownloadPlan {
             $file = switch ($fmt) { 'pdf' { "$name.pdf" } 'epub' { "$name.epub" } 'kindle' { "$name.mobi" } 'supplement' { "$name - code.zip" } }
             if ($fmt -eq 'supplement') {
                 $url = $item.CodeUrl
+                $path = ([uri]$url).AbsolutePath
                 if (([uri]$url).Host -ne 'manning-content.s3.amazonaws.com') { $action = 'link'; $file = '' }
+                elseif ($path -match '(\.tar\.gz|\.tgz)$') { $file = "$name - code$($Matches[1])" }  # not every book's code is a zip
             }
             if ($have[$key]) {
                 $action = 'skip'
@@ -140,7 +142,7 @@ function Get-DownloadPlan {
     }
 }
 
-# What a downloaded file really is, judged by its content: 'pdf', 'epub', 'mobi' or 'zip' when it is
+# What a downloaded file really is, judged by its content: 'pdf', 'epub', 'mobi', 'zip' or 'gzip' when it is
 # complete, otherwise nothing (an HTML page, such as the login page, is nothing).
 function Get-BookFileType {
     [CmdletBinding()]
@@ -170,6 +172,21 @@ function Get-BookFileType {
             if ([Text.Encoding]::ASCII.GetString($tail).Contains('%%EOF')) { return 'pdf' }  # no end marker: cut off
         } elseif ($n -ge 68 -and [Text.Encoding]::ASCII.GetString($head, 60, 8) -eq 'BOOKMOBI') {
             return 'mobi'  # Kindle (MOBI or AZW3)
+        } elseif ($n -ge 18 -and $head[0] -eq 0x1f -and $head[1] -eq 0x8b) {
+            # A gzip (.tgz). .NET reads a cut-off one without complaint, so compare what it decompresses with
+            # the size the gzip records in its last 4 bytes (modulo 4 GB).
+            $null = $s.Seek(-4, 'End')
+            $tail = New-Object byte[] 4
+            $null = $s.Read($tail, 0, 4)
+            $recorded = [BitConverter]::ToUInt32($tail, 0)
+            $null = $s.Seek(0, 'Begin')
+            $gz = [IO.Compression.GZipStream]::new($s, [IO.Compression.CompressionMode]::Decompress, $true)
+            try {
+                $buffer = New-Object byte[] 65536
+                [long]$total = 0
+                while (($read = $gz.Read($buffer, 0, $buffer.Length)) -gt 0) { $total += $read }
+                if (($total % 4294967296) -eq $recorded) { return 'gzip' }
+            } catch [IO.InvalidDataException] { } finally { $gz.Dispose() }
         }
     } finally { $s.Dispose() }
 }
@@ -179,8 +196,8 @@ function Get-BookFileType {
 function Test-DownloadedFile {
     [CmdletBinding()]
     param([string]$Path, [string]$Format)
-    $expected = @{ pdf = 'pdf'; epub = 'epub'; kindle = 'mobi'; supplement = 'zip' }[$Format]
-    (Get-BookFileType -Path $Path) -eq $expected
+    $expected = @{ pdf = @('pdf'); epub = @('epub'); kindle = @('mobi'); supplement = @('zip', 'gzip') }[$Format]
+    (Get-BookFileType -Path $Path) -in $expected
 }
 
 # Checks the folder against the manifest without contacting Manning (-VerifyOnly), e.g. for a backup copy.

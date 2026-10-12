@@ -18,6 +18,15 @@ BeforeAll {
         $zip.Dispose()
         $path
     }
+    # A gzip of random bytes, which don't compress, so cutting its end loses data.
+    function New-TestGzip([string]$Name) {
+        $path = Join-Path $TestDrive $Name
+        $data = New-Object byte[] 50000
+        (New-Object Random 1).NextBytes($data)
+        $gz = [IO.Compression.GZipStream]::new([IO.File]::Create($path), [IO.Compression.CompressionMode]::Compress)
+        $gz.Write($data, 0, $data.Length); $gz.Dispose()
+        $path
+    }
     # A Mobipocket file: its type and creator, "BOOKMOBI", are at byte 60 of the header.
     function New-TestMobi([string]$Name) {
         $path = Join-Path $TestDrive $Name
@@ -60,6 +69,17 @@ Describe 'Get-BookFileType' {
         Get-BookFileType -Path $path | Should -BeNullOrEmpty
     }
 
+    It 'recognises a complete gzip (a .tgz of code)' {
+        Get-BookFileType -Path (New-TestGzip 'code.tgz') | Should -Be 'gzip'
+    }
+
+    It 'returns nothing for a gzip that was cut off (.NET reads one without complaint)' {
+        $bytes = [IO.File]::ReadAllBytes((New-TestGzip 'whole.tgz'))
+        $path = Join-Path $TestDrive 'cut.tgz'
+        [IO.File]::WriteAllBytes($path, $bytes[0..($bytes.Length - 2000)])
+        Get-BookFileType -Path $path | Should -BeNullOrEmpty
+    }
+
     It 'recognises a Kindle (Mobipocket) file' {
         Get-BookFileType -Path (New-TestMobi 'book.mobi') | Should -Be 'mobi'
     }
@@ -80,6 +100,7 @@ Describe 'Test-DownloadedFile' {
         $zip = New-TestZip 'c.zip' @(@{ Name = 'x.py'; Text = 'x' })
         Test-DownloadedFile -Path $pdf -Format pdf | Should -BeTrue
         Test-DownloadedFile -Path $zip -Format supplement | Should -BeTrue
+        Test-DownloadedFile -Path (New-TestGzip 'c.tgz') -Format supplement | Should -BeTrue
         Test-DownloadedFile -Path (New-TestMobi 'k.mobi') -Format kindle | Should -BeTrue
     }
 
