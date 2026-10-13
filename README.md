@@ -43,12 +43,21 @@ liveProjects and liveVideos are listed in `manning-library.json` but not downloa
 
 For the full run checklist, see the [playbook](docs/playbook.md).
 
+### Calibre
+
+```powershell
+.\Update-Calibre.ps1 -WhatIf  # preview
+.\Update-Calibre.ps1          # add the EPUBs to Calibre
+```
+
+Adds every EPUB in the library that isn't in Calibre yet, tagged `Manning`, plus `MEAP` for books still in early access and `MEAP cancelled` for cancelled ones. Books are recognised by their EPUB's SHA-256, so a re-run adds only new books, and gives books already there any tags they lack. A Manning book already in Calibre from another store (Humble bundles include Manning books) is found by its title, with or without a subtitle: it isn't added again, it gets the `Manning` tag, and it's listed so you can check it is the same book. A title that matches several books is left alone and listed. PDFs are left out, and with them the free samplers, which are PDF only. Close Calibre first; the script backs up its database before changing anything. `-MaxBooks 1` adds one book, for a first test.
+
 ## Development
 
 ```powershell
 Invoke-Pester ./tests
 ```
 
-The logic is in [`src/ManningLibrary.psm1`](src/ManningLibrary.psm1) and tested with Pester 5+ using a made-up bookshelf and catalogue ([`tests/fixtures`](tests/fixtures)); [`Get-ManningLibrary.ps1`](Get-ManningLibrary.ps1) handles the session, the network and the output.
+The logic is in [`src/ManningLibrary.psm1`](src/ManningLibrary.psm1) and tested with Pester 5+ using a made-up bookshelf and catalogue ([`tests/fixtures`](tests/fixtures)); [`Get-ManningLibrary.ps1`](Get-ManningLibrary.ps1) handles the session, the network and the output, and [`Update-Calibre.ps1`](Update-Calibre.ps1) the calls to `calibredb`.
 
 Only use this for books you've bought, at the gentle default pace.

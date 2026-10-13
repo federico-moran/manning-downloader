@@ -54,6 +54,16 @@ Re-checks every file against its SHA-256 in the manifest, without contacting Man
 
 **same-isbn** files are the same book (matched by an ISBN from Manning's catalogue, inside an EPUB, in the other library's manifest, or in a file name). **same-title** files have exactly the same title: check them by hand. Which copy to keep is decided in Calibre.
 
+## 7. Add the books to Calibre
+
+Close Calibre, then:
+
+```powershell
+.\Update-Calibre.ps1 -WhatIf
+```
+
+Check the list of books found **by title** (copies from Humble or elsewhere that only get the `Manning` tag): each should be the same book. Then `.\Update-Calibre.ps1 -MaxBooks 1`, check the book in Calibre, and `.\Update-Calibre.ps1` for the rest.
+
 ## Next time (new purchases)
 
-Run step 4 again. Only new files are downloaded.
+Run step 4 again, then step 7. Only new files are downloaded, and only new books added.
