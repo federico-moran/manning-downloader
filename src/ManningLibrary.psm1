@@ -318,5 +318,54 @@ function Compare-Library {
     }
 }
 
+# The keys a Calibre book's title is found by: the title in lower case and, when it has a subtitle
+# ("Title: Subtitle" or "Title - Subtitle"), the title without it.
+function Get-CalibreTitleKey([string]$Title) {
+    $t = $Title.Trim().ToLowerInvariant()
+    $short = ($t -split ': | - ', 2)[0].Trim()
+    if ($short -ne $t) { $t, $short } else { $t }
+}
+
+# What to do in Calibre for each EPUB in the library: 'add' it (tagged Manning, plus MEAP and MEAP cancelled
+# when they apply), 'tag' a book already there that lacks some of those tags, or 'skip' it. Calibre books are
+# recognised by the SHA-256 of their EPUB, since Calibre stores the file unchanged, or else by title: a
+# Manning book that came in a Humble bundle is already in Calibre with Humble's copy (which is not the same
+# file), and only gets the tags. A title matching several books is left to 'check' by hand. PDFs are left out,
+# and with them the free samplers, which are PDF only.
+function Get-CalibrePlan {
+    [CmdletBinding()]
+    param(
+        [object[]]$Manifest,
+        [hashtable]$InCalibre = @{},  # SHA-256 of an EPUB in Calibre -> @{ id; tags }
+        [hashtable]$ByTitle = @{},    # a Get-CalibreTitleKey key -> the Calibre books with it, @( @{ id; tags } )
+        [string]$SourceTag = 'Manning'
+    )
+    foreach ($row in $Manifest | Where-Object { $_.status -eq 'present' -and $_.format -eq 'epub' }) {
+        $tags = @($SourceTag)
+        if ($row.meap -in 'meap', 'cancelled') { $tags += 'MEAP' }
+        if ($row.meap -eq 'cancelled') { $tags += 'MEAP cancelled' }
+        $book = $InCalibre[$row.sha256.ToLowerInvariant()]
+        $item = [pscustomobject]@{ Action = 'add'; File = $row.file; Title = $row.title; Tags = $tags; Id = $null; Match = $null }
+        if ($book) {
+            $item.Match = 'file'
+        } else {
+            $same = @($ByTitle[$row.title.Trim().ToLowerInvariant()])
+            if ($same.Count -gt 1) { $item.Action = 'check'; $item; continue }
+            if ($same[0]) { $book = $same[0]; $item.Match = 'title' }
+        }
+        if ($book) {
+            $item.Id = $book.id
+            $missing = @($tags | Where-Object { @($book.tags) -notcontains $_ })
+            if ($missing) {
+                $item.Action = 'tag'
+                $item.Tags = @(@($book.tags) + $missing | Where-Object { $_ })  # keeps the tags already there
+            } else {
+                $item.Action = 'skip'
+            }
+        }
+        $item
+    }
+}
+
 Export-ModuleMember -Function ConvertFrom-Bookshelf, Add-CatalogInfo, Get-DownloadPlan, Get-BookFileType, Test-DownloadedFile,
-    Test-Library, ConvertTo-Isbn13, Get-EpubIsbn, Compare-Library
+    Test-Library, ConvertTo-Isbn13, Get-EpubIsbn, Compare-Library, Get-CalibreTitleKey, Get-CalibrePlan
