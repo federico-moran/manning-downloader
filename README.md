@@ -1,5 +1,7 @@
 # Manning Downloader
 
+> Built by a non-developer, fully agentically, after taking Matt Pocock's course: [see how](#how-this-was-built).
+
 Downloads the ebooks you own on [Manning](https://www.manning.com/dashboard), checking that every file is complete.
 
 A PowerShell 7 script using your own logged-in session. It's a sibling of [humblebundle-downloader](https://github.com/federico-moran/humblebundle-downloader), built the same way, and of [packtpub-downloader](https://github.com/federico-moran/packtpub-downloader). See [docs/design.md](docs/design.md) for how it talks to Manning and why.
@@ -61,3 +63,19 @@ Invoke-Pester ./tests
 The logic is in [`src/ManningLibrary.psm1`](src/ManningLibrary.psm1) and tested with Pester 5+ using a made-up bookshelf and catalogue ([`tests/fixtures`](tests/fixtures)); [`Get-ManningLibrary.ps1`](Get-ManningLibrary.ps1) handles the session, the network and the output, and [`Update-Calibre.ps1`](Update-Calibre.ps1) the calls to `calibredb`.
 
 Only use this for books you've bought, at the gentle default pace.
+
+## How this was built
+
+I'm not a developer. This year I took Matt Pocock's [AI Coding for Real Engineers](https://www.aihero.dev/cohorts/ai-coding-for-real-engineers-m0k0w) course, and this tool and its two siblings were my first projects afterwards. They were built fully agentically: Claude Code wrote all the code and the docs. My part was choosing the problems, finding out how each store's site works, making the decisions (each design doc records them and why), and testing everything against my own libraries. I followed the course's process, with Matt's [skills](https://github.com/mattpocock/skills) installed in Claude Code.
+
+I built the three between 2026-09-27 and 2026-10-11. Together they've downloaded and checked about 2,550 files, and the Humble and Manning tools have 105 automated tests between them.
+
+This was the third and quickest, because it reuses the Humble tool's design. The new problem was checking files with nothing to check them against: Manning publishes no sizes or hashes, and stamps every download with the buyer's details, so no two downloads are identical. So each file is checked for being complete and of the right type instead: a PDF with its end marker, an EPUB, a zip, or a gzip whose size matches its trailer. 232 files came down, all passing.
+
+The siblings: [packtpub-downloader](https://github.com/federico-moran/packtpub-downloader), my favourite, and [humblebundle-downloader](https://github.com/federico-moran/humblebundle-downloader).
+
+A personal project: issues are welcome, but fixes aren't promised. Not affiliated with or endorsed by Matt Pocock, AI Hero, PacktPub, Humble Bundle or Manning.
+
+## License
+
+[MIT](LICENSE)
