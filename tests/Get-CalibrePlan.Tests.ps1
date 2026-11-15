@@ -14,7 +14,7 @@ Describe 'Get-CalibrePlan' {
         $plan[0].Tags | Should -Be @('Manning')
     }
 
-    It 'tags a MEAP, and a cancelled MEAP' {
+    It 'tags a MEAP, and a canceled MEAP' {
         $plan = @(Get-CalibrePlan -Manifest @((New-Row 'a.epub' 'AAA' 'meap'), (New-Row 'b.epub' 'BBB' 'cancelled')))
 
         $plan[0].Tags | Should -Be @('Manning', 'MEAP')

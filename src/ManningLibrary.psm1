@@ -41,7 +41,7 @@ function ConvertFrom-Bookshelf {
     }
 }
 
-# Adds what Manning's public catalogue (productsAutocompleteInfo) says about each item, matched by product ID:
+# Adds what Manning's public catalog (productsAutocompleteInfo) says about each item, matched by product ID:
 # ISBN, last update, subtitle, tags, and the newer edition if there is one. Withdrawn products aren't in it.
 function Add-CatalogInfo {
     [CmdletBinding()]
@@ -266,8 +266,8 @@ function Compare-Library {
     $key = { param($s) ([string]$s).ToLowerInvariant() -replace '^the[\W_]+', '' -replace '[^\p{L}\p{N}]', '' }
     $byHash = @{}
     $byId = @{}     # Manning ID -> its files here (a book's PDF and EPUB share an ID)
-    $byIsbn = @{}   # ISBN -> ID, from the manifest (Manning's catalogue) and the book's EPUB
-    $byTitle = @{}  # normalised title -> ID
+    $byIsbn = @{}   # ISBN -> ID, from the manifest (Manning's catalog) and the book's EPUB
+    $byTitle = @{}  # normalized title -> ID
     foreach ($row in $Manifest | Where-Object { $_.status -eq 'present' -and $_.file }) {
         $byHash[$row.sha256.ToLowerInvariant()] = $row
         $byId[$row.id] = @($byId[$row.id]) + $row | Where-Object { $_ }
@@ -328,7 +328,7 @@ function Get-CalibreTitleKey([string]$Title) {
 
 # What to do in Calibre for each EPUB in the library: 'add' it (tagged Manning, plus MEAP and MEAP cancelled
 # when they apply), 'tag' a book already there that lacks some of those tags, or 'skip' it. Calibre books are
-# recognised by the SHA-256 of their EPUB, since Calibre stores the file unchanged, or else by title: a
+# recognized by the SHA-256 of their EPUB, since Calibre stores the file unchanged, or else by title: a
 # Manning book that came in a Humble bundle is already in Calibre with Humble's copy (which is not the same
 # file), and only gets the tags. A title matching several books is left to 'check' by hand. PDFs are left out,
 # and with them the free samplers, which are PDF only.

@@ -35,7 +35,7 @@ Describe 'ConvertFrom-Bookshelf' {
         $m.Cancelled | Should -BeFalse
     }
 
-    It 'marks a cancelled MEAP' {
+    It 'marks a canceled MEAP' {
         $items[2].Cancelled | Should -BeTrue
         $items[2].Formats | Should -Be @('EPUB', 'PDF')
     }
@@ -61,7 +61,7 @@ Describe 'ConvertFrom-Bookshelf' {
 Describe 'Add-CatalogInfo' {
     BeforeAll { $items = @(Add-CatalogInfo -Items @(ConvertFrom-Bookshelf -Html $html) -Catalog $catalog) }
 
-    It 'adds the ISBN, last update, subtitle and tags of a book in the catalogue, matched by ID' {
+    It 'adds the ISBN, last update, subtitle and tags of a book in the catalog, matched by ID' {
         $b = $items[0]
         $b.InCatalog | Should -BeTrue
         $b.Isbn | Should -Be '9781633438071'
@@ -77,12 +77,12 @@ Describe 'Add-CatalogInfo' {
         $old.NextEditionOwned | Should -BeFalse
     }
 
-    It 'marks a book the catalogue no longer has (a withdrawn MEAP), without an ISBN' {
+    It 'marks a book the catalog no longer has (a withdrawn MEAP), without an ISBN' {
         $items[2].InCatalog | Should -BeFalse
         $items[2].Isbn | Should -BeNullOrEmpty
     }
 
-    It 'keeps the items the catalogue has no entry for, unchanged' {
+    It 'keeps the items the catalog has no entry for, unchanged' {
         $items.Count | Should -Be 6
         $items[4].Title | Should -Be 'Your First Service: Create It'
     }

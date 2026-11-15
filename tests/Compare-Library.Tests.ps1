@@ -53,7 +53,7 @@ Describe 'Compare-Library' {
         $result.Ours | Should -Be @($null)
     }
 
-    It 'matches by the ISBN in our manifest (from Manning''s catalogue), even for a PDF-only book' {
+    It 'matches by the ISBN in our manifest (from Manning''s catalog), even for a PDF-only book' {
         New-TestEpub (Join-Path $other 'Some Bundle Copy.epub') '9781617293153'
         $manifest = @(New-Row 'Old Calculator Handbook.pdf' 'Old Calculator Handbook' -Isbn '9781617293153')
 
