@@ -19,7 +19,7 @@ liveProjects and liveVideos are listed in `manning-library.json` but not downloa
 
 ## Setup
 
-1. PowerShell 7 (`pwsh`).
+1. Windows, with PowerShell 7 (`pwsh`).
 2. Your session cookie. Log in at manning.com, press **F12** → **Application** → **Cookies** → `https://www.manning.com`, and copy the value of `JSESSIONID`. The script asks for it the first time (it isn't shown as you paste) and saves it encrypted for your Windows account in `%LOCALAPPDATA%\manning-downloader`. When it expires, you're asked again.
 
 **The cookie is your login.** Never paste it anywhere else, and don't commit it. **The files carry your name and email** (Manning stamps every download): keep the library folder private.
@@ -34,7 +34,7 @@ liveProjects and liveVideos are listed in `manning-library.json` but not downloa
 
 | Option | Default | |
 | --- | --- | --- |
-| `-Folder` | `OneDrive\Documents\Manning` | Where the files, `manifest.csv` and `manning-library.json` go |
+| `-Folder` | `OneDrive\Documents\Manning` | Where the files, `manifest.csv` and `manning-library.json` go; created if it doesn't exist |
 | `-Format` | `pdf, epub, supplement` | Also `kindle` (`.mobi`); `supplement` is the code samples |
 | `-PlainEpub` | off | Take the EPUB, not the EPUB3, when a book has both |
 | `-MaxDownloads` | all | Stop after this many files |
@@ -68,7 +68,7 @@ Only use this for books you've bought, at the gentle default pace.
 
 I'm not a developer. In June 2026 I took Matt Pocock's two-week [AI Coding for Real Engineers](https://www.aihero.dev/cohorts/ai-coding-for-real-engineers-m0k0w) course, and this tool and its two siblings were my first projects afterwards. They were built fully agentically: Claude Code wrote all the code and the docs. My part was choosing the problems, finding out how each store's site works, making the decisions (each design doc records them and why), and testing everything against my own libraries. I followed the course's process, with Matt's [skills](https://github.com/mattpocock/skills) installed in Claude Code.
 
-I built the three between 2026-09-27 and 2026-10-11. Together they've downloaded and checked about 2,550 files, and the Humble and Manning tools have 105 automated tests between them.
+I built the three between 2026-09-27 and 2026-10-12. Together they've downloaded and checked about 2,550 files, and the three have 127 automated tests between them (the Packt tool's were added in November 2026, before publishing).
 
 This was the third and quickest, because it reuses the Humble tool's design. The new problem was checking files with nothing to check them against: Manning publishes no sizes or hashes, and stamps every download with the buyer's details, so no two downloads are identical. So each file is checked for being complete and of the right type instead: a PDF with its end marker, an EPUB, a zip, or a gzip whose size matches its trailer. 232 files came down, all passing.
 

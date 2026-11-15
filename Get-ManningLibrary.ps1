@@ -101,9 +101,10 @@ function Get-SessionCookie([switch]$Ask) {
 }
 $script:cookie = Get-SessionCookie
 
-# Calls Manning as you: a page's content, or a file saved to -OutFile. The cookie is only ever sent to
-# www.manning.com (code zips are on Amazon S3). Without a valid session Manning redirects to its login page:
-# the cookie is asked for again, once.
+# Calls Manning as you: a page's content, or a file saved to -OutFile. The cookie goes only with requests to
+# www.manning.com, never with code downloads (those are on Amazon S3). Without a valid session Manning
+# redirects to login.manning.com, and PowerShell passes the cookie along to that host too; the cookie is
+# then asked for again, once.
 function Invoke-Manning([string]$Uri, [string]$OutFile) {
     $own = ([uri]$Uri).Host -eq 'www.manning.com'
     for ($attempt = 1; ; $attempt++) {

@@ -41,16 +41,17 @@ Each bookshelf row is `<tr class="license-row" is-meap is-book is-video>`, with 
 | Version | `MEAP v12 (2026-07-14)` for a MEAP, the catalog's last-update date otherwise, as it was when the file was downloaded | What a later "new version" check compares; the hash can't be used |
 | Duplicates with other libraries | All downloaded; `-CompareWith` (SHA-256, ISBN, then exact title) shows the overlap | A Manning copy may be newer than a Humble one; keeping one is decided in Calibre |
 | Pace | One file at a time, 5 s apart, 3 retries with growing waits | Human pace |
+| Calibre | Added after v1 (2026-10-12): `Update-Calibre.ps1` adds EPUBs only, tagged `Manning`, plus `MEAP` or `MEAP cancelled`. Books are matched by SHA-256, then by title: a copy already in Calibre from another store only gets the tags, and a title matching several books is left to check by hand | Humble bundles include Manning books, and Humble's file isn't Manning's, so the hash alone would add those books twice |
 
 ## Later
 
 - **v1.1:** report MEAPs with a newer version, books that are now final, and newer editions not on the bookshelf (all already in `manning-library.json`); `-Update` downloads new versions and keeps the old file, renamed with the date (the Humble tool's rule).
-- **Calibre:** an `Update-Calibre.ps1` like the Humble tool's, tagged `Manning`.
 
 ## Code layout
 
-- [`src/ManningLibrary.psm1`](../src/ManningLibrary.psm1): the logic, with no network calls. Tested: `ConvertFrom-Bookshelf`, `Add-CatalogInfo`, `Get-DownloadPlan`, `Get-BookFileType` and `Test-DownloadedFile`, `Test-Library`, `Get-EpubIsbn`, `Compare-Library`.
+- [`src/ManningLibrary.psm1`](../src/ManningLibrary.psm1): the logic, with no network calls. Tested: `ConvertFrom-Bookshelf`, `Add-CatalogInfo`, `Get-DownloadPlan`, `Get-BookFileType` and `Test-DownloadedFile`, `Test-Library`, `Get-EpubIsbn`, `Compare-Library`, `Get-CalibrePlan`.
 - [`Get-ManningLibrary.ps1`](../Get-ManningLibrary.ps1): session, HTTP, downloading, writing the manifest, output. Not unit tested; checked by a real `-WhatIf` and a one-file run.
+- [`Update-Calibre.ps1`](../Update-Calibre.ps1): reading the Calibre library and calling `calibredb`. Not unit tested; what it does to each book is decided by `Get-CalibrePlan`, which is.
 - [`tests/fixtures`](../tests/fixtures): a made-up bookshelf and catalog in the shape of the real answers. Never real ones: they contain order IDs.
 
 ## Open questions
