@@ -1,5 +1,7 @@
 # Manning Downloader
 
+[![Tests](https://github.com/federico-moran/manning-downloader/actions/workflows/tests.yml/badge.svg)](https://github.com/federico-moran/manning-downloader/actions/workflows/tests.yml)
+
 > Built by a non-developer, fully agentically, after taking Matt Pocock's course: [see how](#how-this-was-built).
 
 Downloads the ebooks you own on [Manning](https://www.manning.com/dashboard), checking that every file is complete.
