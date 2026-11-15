@@ -39,7 +39,7 @@ BeforeAll {
 }
 
 Describe 'Get-BookFileType' {
-    It 'recognises a complete PDF' {
+    It 'recognizes a complete PDF' {
         $path = New-TestFile 'whole.pdf' "%PDF-1.7`n1 0 obj`n<<>>`nendobj`ntrailer`n<<>>`n%%EOF`n"
         Get-BookFileType -Path $path | Should -Be 'pdf'
     }
@@ -49,14 +49,14 @@ Describe 'Get-BookFileType' {
         Get-BookFileType -Path $path | Should -BeNullOrEmpty
     }
 
-    It 'recognises an EPUB by its first entry' {
+    It 'recognizes an EPUB by its first entry' {
         $path = New-TestZip 'book.epub' @(
             @{ Name = 'mimetype'; Text = 'application/epub+zip' }
             @{ Name = 'OEBPS/content.opf'; Text = '<package/>' })
         Get-BookFileType -Path $path | Should -Be 'epub'
     }
 
-    It 'recognises any other complete zip as a zip' {
+    It 'recognizes any other complete zip as a zip' {
         $path = New-TestZip 'code.zip' @(@{ Name = 'chapter1/example.py'; Text = 'print("hi")' })
         Get-BookFileType -Path $path | Should -Be 'zip'
     }
@@ -69,7 +69,7 @@ Describe 'Get-BookFileType' {
         Get-BookFileType -Path $path | Should -BeNullOrEmpty
     }
 
-    It 'recognises a complete gzip (a .tgz of code)' {
+    It 'recognizes a complete gzip (a .tgz of code)' {
         Get-BookFileType -Path (New-TestGzip 'code.tgz') | Should -Be 'gzip'
     }
 
@@ -80,7 +80,7 @@ Describe 'Get-BookFileType' {
         Get-BookFileType -Path $path | Should -BeNullOrEmpty
     }
 
-    It 'recognises a Kindle (Mobipocket) file' {
+    It 'recognizes a Kindle (Mobipocket) file' {
         Get-BookFileType -Path (New-TestMobi 'book.mobi') | Should -Be 'mobi'
     }
 

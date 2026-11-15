@@ -15,7 +15,7 @@ In a PowerShell 7 terminal in the repo folder:
 .\Get-ManningLibrary.ps1 -WhatIf
 ```
 
-Paste the cookie when asked. It reads your bookshelf and Manning's catalogue, saves `manning-library.json` in `OneDrive\Documents\Manning`, and prints the plan: how many files would be downloaded, and how many code links are on GitHub. Manning gives no file sizes, so there's no total; expect a few GB for about a hundred books.
+Paste the cookie when asked. It reads your bookshelf and Manning's catalog, saves `manning-library.json` in `OneDrive\Documents\Manning`, and prints the plan: how many files would be downloaded, and how many code links are on GitHub. Manning gives no file sizes, so there's no total; expect a few GB for about a hundred books.
 
 If it says the bookshelf came back empty, Manning has changed its dashboard: see [design.md](design.md).
 
@@ -35,7 +35,7 @@ Check that the file opens, and that `manifest.csv` has a row for it with `valid 
 
 Leave the terminal open. To stop, press **Ctrl+C**; run the same command again to carry on (an unfinished file starts over). If the session expires during the run, you're asked for a new `JSESSIONID`: copy it from the browser again.
 
-At the end it lists files that failed (run again to retry), books with their code on GitHub, and cancelled or withdrawn MEAPs.
+At the end it lists files that failed (run again to retry), books with their code on GitHub, and canceled or withdrawn MEAPs.
 
 ## 5. Verify
 
@@ -52,7 +52,7 @@ Re-checks every file against its SHA-256 in the manifest, without contacting Man
 .\Get-ManningLibrary.ps1 -CompareWith "$env:USERPROFILE\OneDrive\Documents\PacktPub"
 ```
 
-**same-isbn** files are the same book (matched by an ISBN from Manning's catalogue, inside an EPUB, in the other library's manifest, or in a file name). **same-title** files have exactly the same title: check them by hand. Which copy to keep is decided in Calibre.
+**same-isbn** files are the same book (matched by an ISBN from Manning's catalog, inside an EPUB, in the other library's manifest, or in a file name). **same-title** files have exactly the same title: check them by hand. Which copy to keep is decided in Calibre.
 
 ## 7. Add the books to Calibre
 

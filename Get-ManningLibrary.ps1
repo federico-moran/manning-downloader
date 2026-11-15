@@ -7,7 +7,7 @@
     for your Windows account (DPAPI) under %LOCALAPPDATA%\manning-downloader, never in the repo. When it
     expires (Manning sends the script to its login page), you are asked again. -ResetSession forgets it.
 
-    Every run reads your bookshelf (the dashboard's list) and Manning's public catalogue (for ISBNs), and saves
+    Every run reads your bookshelf (the dashboard's list) and Manning's public catalog (for ISBNs), and saves
     both as manning-library.json in the folder: books, liveProjects and liveVideos, with MEAP versions.
     Files are downloaded one at a time, to <name>.part, checked (a complete PDF, EPUB, Kindle file or zip of
     the format asked for), and only then given their real name and recorded in manifest.csv. A file that
@@ -131,7 +131,7 @@ function Invoke-Manning([string]$Uri, [string]$OutFile) {
     }
 }
 
-# ---- Bookshelf and catalogue ------------------------------------------------------------------------
+# ---- Bookshelf and catalog ------------------------------------------------------------------------
 $null = New-Item -ItemType Directory -Force -Path $Folder -WhatIf:$false
 $shelf = (Invoke-Manning 'https://www.manning.com/dashboard/getLicensesAjax?isDropboxIntegrated=&order=purchaseDate&sort=desc&filter=all').Content
 $found = @(ConvertFrom-Bookshelf -Html $shelf)
@@ -174,7 +174,7 @@ function Set-Row($Item, [string]$Status, [string]$Valid = '') {
 }
 foreach ($p in $plan | Where-Object Action -eq 'link') { Set-Row $p 'link' }
 foreach ($p in $plan | Where-Object Action -eq 'skip') {
-    # The version stays the one downloaded; the catalogue may have found an ISBN since.
+    # The version stays the one downloaded; the catalog may have found an ISBN since.
     $row = $rows["$($p.Id)|$($p.Format)"]
     if (-not $row.isbn -and $p.Isbn) { $row.isbn = $p.Isbn }
 }
@@ -204,7 +204,7 @@ for ($n = 0; $n -lt $todo.Count; $n++) {
     if ($ok) {
         Move-Item -LiteralPath $part -Destination (Join-Path $Folder $p.File) -Force
         if (-not $p.Isbn -and $p.Format -eq 'epub') {
-            # Not in Manning's catalogue (a withdrawn book): the EPUB's own ISBN, for its other files too.
+            # Not in Manning's catalog (a withdrawn book): the EPUB's own ISBN, for its other files too.
             $isbn = Get-EpubIsbn -Path (Join-Path $Folder $p.File) | Select-Object -First 1
             if ($isbn) {
                 $p.Isbn = $isbn
@@ -227,8 +227,8 @@ Write-Host ''
 $withdrawn = @($items | Where-Object { $_.Kind -eq 'book' -and ($_.Cancelled -or -not $_.InCatalog) })
 $links = @($plan | Where-Object Action -eq 'link')
 if ($withdrawn) {
-    Write-Host "$($withdrawn.Count) books are cancelled MEAPs or no longer in Manning's catalogue (downloaded like the others; a refund or exchange is up to you, on the dashboard):"
-    Write-Table ($withdrawn | Select-Object Title, @{ n = 'State'; e = { if ($_.Cancelled) { 'cancelled' } else { 'not in catalogue' } } }) Title, State
+    Write-Host "$($withdrawn.Count) books are canceled MEAPs or no longer in Manning's catalog (downloaded like the others; a refund or exchange is up to you, on the dashboard):"
+    Write-Table ($withdrawn | Select-Object Title, @{ n = 'State'; e = { if ($_.Cancelled) { 'canceled' } else { 'not in catalog' } } }) Title, State
 }
 if ($links) { Write-Host "$($links.Count) books have their code on GitHub (recorded in the manifest as links):"; Write-Table $links Title, Url }
 if ($failed) { Write-Warning "$($failed.Count) files failed (recorded as failed; the next run retries them):"; Write-Table $failed File, Title }

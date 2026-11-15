@@ -8,12 +8,12 @@ A PowerShell 7 script using your own logged-in session. It's a sibling of [humbl
 
 ## What it does
 
-- Reads your bookshelf (the list on your dashboard) and Manning's public catalogue, and saves both as `manning-library.json`: every book, liveProject and liveVideo, with ISBNs, MEAP versions and newer editions.
+- Reads your bookshelf (the list on your dashboard) and Manning's public catalog, and saves both as `manning-library.json`: every book, liveProject and liveVideo, with ISBNs, MEAP versions and newer editions.
 - Downloads each book's PDF and EPUB (the EPUB3 when Manning offers one), and the code samples Manning hosts, one file at a time, 5 seconds apart.
 - Checks each file is a complete PDF, EPUB or zip of the format asked for before giving it its real name. A file that fails is downloaded once more, then recorded as failed.
 - Keeps `manifest.csv` in the folder: every file with its ISBN, title, authors, version, size and SHA-256. Re-runs skip what's there.
 - Names files by title (`ASP.NET Core in Action, Third Edition.pdf`). Code is saved as `<title> - code.zip`; code on GitHub is recorded as a link instead.
-- Cancelled MEAPs and books no longer in Manning's catalogue are downloaded like the others, and listed at the end.
+- Canceled MEAPs and books no longer in Manning's catalog are downloaded like the others, and listed at the end.
 
 liveProjects and liveVideos are listed in `manning-library.json` but not downloaded.
 
@@ -52,7 +52,7 @@ For the full run checklist, see the [playbook](docs/playbook.md).
 .\Update-Calibre.ps1          # add the EPUBs to Calibre
 ```
 
-Adds every EPUB in the library that isn't in Calibre yet, tagged `Manning`, plus `MEAP` for books still in early access and `MEAP cancelled` for cancelled ones. Books are recognised by their EPUB's SHA-256, so a re-run adds only new books, and gives books already there any tags they lack. A Manning book already in Calibre from another store (Humble bundles include Manning books) is found by its title, with or without a subtitle: it isn't added again, it gets the `Manning` tag, and it's listed so you can check it is the same book. A title that matches several books is left alone and listed. PDFs are left out, and with them the free samplers, which are PDF only. Close Calibre first; the script backs up its database before changing anything. `-MaxBooks 1` adds one book, for a first test.
+Adds every EPUB in the library that isn't in Calibre yet, tagged `Manning`, plus `MEAP` for books still in early access and `MEAP cancelled` for canceled ones. Books are recognized by their EPUB's SHA-256, so a re-run adds only new books, and gives books already there any tags they lack. A Manning book already in Calibre from another store (Humble bundles include Manning books) is found by its title, with or without a subtitle: it isn't added again, it gets the `Manning` tag, and it's listed so you can check it is the same book. A title that matches several books is left alone and listed. PDFs are left out, and with them the free samplers, which are PDF only. Close Calibre first; the script backs up its database before changing anything. `-MaxBooks 1` adds one book, for a first test.
 
 ## Development
 
@@ -60,7 +60,7 @@ Adds every EPUB in the library that isn't in Calibre yet, tagged `Manning`, plus
 Invoke-Pester ./tests
 ```
 
-The logic is in [`src/ManningLibrary.psm1`](src/ManningLibrary.psm1) and tested with Pester 5+ using a made-up bookshelf and catalogue ([`tests/fixtures`](tests/fixtures)); [`Get-ManningLibrary.ps1`](Get-ManningLibrary.ps1) handles the session, the network and the output, and [`Update-Calibre.ps1`](Update-Calibre.ps1) the calls to `calibredb`.
+The logic is in [`src/ManningLibrary.psm1`](src/ManningLibrary.psm1) and tested with Pester 5+ using a made-up bookshelf and catalog ([`tests/fixtures`](tests/fixtures)); [`Get-ManningLibrary.ps1`](Get-ManningLibrary.ps1) handles the session, the network and the output, and [`Update-Calibre.ps1`](Update-Calibre.ps1) the calls to `calibredb`.
 
 Only use this for books you've bought, at the gentle default pace.
 
@@ -72,7 +72,7 @@ I built the three between 2026-09-27 and 2026-10-11. Together they've downloaded
 
 This was the third and quickest, because it reuses the Humble tool's design. The new problem was checking files with nothing to check them against: Manning publishes no sizes or hashes, and stamps every download with the buyer's details, so no two downloads are identical. So each file is checked for being complete and of the right type instead: a PDF with its end marker, an EPUB, a zip, or a gzip whose size matches its trailer. 232 files came down, all passing.
 
-The siblings: [packtpub-downloader](https://github.com/federico-moran/packtpub-downloader), my favourite, and [humblebundle-downloader](https://github.com/federico-moran/humblebundle-downloader).
+The siblings: [packtpub-downloader](https://github.com/federico-moran/packtpub-downloader), my favorite, and [humblebundle-downloader](https://github.com/federico-moran/humblebundle-downloader).
 
 A personal project: issues are welcome, but fixes aren't promised. Not affiliated with or endorsed by Matt Pocock, AI Hero, PacktPub, Humble Bundle or Manning.
 
