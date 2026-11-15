@@ -5,3 +5,7 @@ manifest.csv
 
 # Session cookie, in case one is ever saved here by mistake (it belongs in %LOCALAPPDATA%)
 session*.xml
+
+# Personal Claude Code files: your own notes and permissions, not shared
+CLAUDE.local.md
+.claude/settings.local.json
